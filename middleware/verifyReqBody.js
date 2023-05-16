@@ -1,4 +1,6 @@
-function validateMovieReqBody(req,res,next){
+const {released, unreleased, blocked} = require('../utils/constant')
+
+function validateMovieReqBody(req, res, next){
     if(!req.body.name){
         return res.status(400).send({
             msg: 'name field is missing in movie creation'
@@ -17,12 +19,12 @@ function validateMovieReqBody(req,res,next){
         })
     }
 
-    const defaultReleaseStatus = ['UNRELEASED', 'RELEASED', 'BLOCKED'];
-    const tempStatus = defaultReleaseStatus.includes(req.body.releaseStatus);
+    const defaultRelaseStatus = [released, unreleased, blocked];
+    const tempStatus = defaultRelaseStatus.includes(req.body.releaseStatus);
     console.log('releaseStatus', tempStatus);
     if(!tempStatus){
         return res.status(400).send({
-            msg: 'releaseStatus should be UNRELEASED/RELEASED/BLOCKED.'
+            msg: 'releaseStaus should be UNRELEASED/RELEASED/BLOCKED.'
         })
     }
 
@@ -38,6 +40,8 @@ function validateMovieReqBody(req,res,next){
 
 }
 
-module.exports={
+
+
+module.exports = {
     validateMovieReqBody
 }
