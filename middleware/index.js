@@ -1,7 +1,8 @@
 const { validateMovieReqBody } = require('./verifyReqBody');
-const { verifyToken} = require('./auth');
+const { verifyToken, isAdmin} = require('./auth');
 
 module.exports = {
     validateMovieReqBody,
-    verifyToken
+    verifyToken,
+    isAdmin
 }
