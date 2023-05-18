@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const bcrypt = require('bcrypt')
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
@@ -10,6 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const Movie = require('./models/movies.models');
 const Theatre = require('./models/theatre.model');
+const User = require('./models/users.models');
 const { PORT } = require('./configs/server.config');
 const { DB_URL } = require('./configs/db.config');
 
@@ -18,7 +20,7 @@ const { DB_URL } = require('./configs/db.config');
     try{    
         await mongoose.connect(DB_URL);
         console.log('db connected');
-        await init();
+       await init();
     }
     catch(err){
         console.error('error getting while connecting mongoDB', err);
@@ -138,6 +140,17 @@ async function init(){
     });
 
     console.log("Theatres created");
+
+    await User.collection.drop();
+    await User.create({
+        name: "admin",
+        email: "admin@gmail.com",
+        password: bcrypt.hashSync('Welcome', 8),
+        userId: "admin",
+        userType: "ADMIN"
+    })
+
+    console.log('Admin User has been created');
 }
 catch(err){
     console.log('error while inserting default entries in DB', err);
@@ -146,8 +159,10 @@ catch(err){
 
 
 // call the routes
+require('./routes/auth.routes')(app);
 require('./routes/movie.routes')(app);
 require('./routes/theatre.routes')(app);
+
 
 app.listen(PORT, ()=> {
     console.log(`server is running on port: ${PORT}, please access it on http://localhost:${PORT}`)
