@@ -51,8 +51,7 @@ async function isAdminOrClient(req, res, next){
         _id: id
     })
 
-    if(user && user.userStatus !== 'APPROVED'){
-        
+    if(user && user.userStatus === 'APPROVED'){
         if(user.userType === 'ADMIN'){
             next();
         }else if(user.userType === 'CLIENT'){
