@@ -1,3 +1,4 @@
+
 const {released, unreleased, blocked} = require('../utils/constant')
 
 function validateMovieReqBody(req, res, next){

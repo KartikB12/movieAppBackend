@@ -24,14 +24,15 @@ async function updatePassword(req, res){
 }
 
 async function updateProfile(req, res){
-    const userId = req._id;
+    const userId = req.params.userId;
     try{
-    const user = await User.findOneAndUpdate({
-        _id: userId
+    await User.findOneAndUpdate({
+        userId: userId
     }, {
         userType: req.body.userType,
         userStatus: req.body.userStatus,
-        name: req.body.name
+        name: req.body.name,
+        email: req.body.email
     }).exec();
 
     res.send({

@@ -20,7 +20,7 @@ const { DB_URL } = require('./configs/db.config');
     try{    
         await mongoose.connect(DB_URL);
         console.log('db connected');
-       // await init();
+        //await init();
     }
     catch(err){
         console.error('error getting while connecting mongoDB', err);
@@ -89,20 +89,61 @@ async function init(){
     });
     console.log("Movies inserted in the db");
 
+    await User.collection.drop();
+    await User.create({
+        name: "admin",
+        email: "kartikjbhandari@gmail.com",
+        password: bcrypt.hashSync('Welcome', 8),
+        userId: "admin",
+        userType: "ADMIN"
+    })
+
+    const client1= await User.create({
+        name: "client1",
+        email: "client1@gmail.com",
+        password: bcrypt.hashSync('Welcome', 8),
+        userId: "client1",
+        userStatus: "PENDING",
+        userType: "CLIENT"
+    })
+
+
+    const client2= await User.create({
+        name: "client2",
+        email: "client2@gmail.com",
+        password: bcrypt.hashSync('Welcome', 8),
+        userId: "client2",
+        userStatus: "PENDING",
+        userType: "CLIENT"
+    })
+
+    const client3= await User.create({
+        name: "kartik",
+        email: "kartikjbhandari@gmail.com",
+        password: bcrypt.hashSync('Welcome', 8),
+        userId: "kartik",
+        userStatus: "APPROVED",
+        userType: "CUSTOMER"
+    })
+
+    console.log('Admin User has been created');
+
     await Theatre.collection.drop();
     await Theatre.create({
         name : "FunCinemas" ,
         city : "Bangalore",
         description : "Top class theatre" ,
         pinCode : 560052,
-        movies: [movie1._id,movie2._id]
+        movies: [movie1._id,movie2._id],
+        ownerId: client1._id
     });
     await Theatre.create({
         name : "PVR Cinemas - Kormangala" ,
         city : "Bangalore",
         description : "PVR franchise theatre" ,
         pinCode : 560095,
-        movies: [movie3._id,movie4._id]
+        movies: [movie3._id,movie4._id],
+        ownerId: client2._id
 
     });
     await Theatre.create({
@@ -110,7 +151,8 @@ async function init(){
         city : "Bangalore",
         description : "IMax franchise theatre" ,
         pinCode : 560095,
-        movies: [movie1._id,movie5._id]
+        movies: [movie1._id,movie5._id],
+        ownerId: client3._id
 
     });
     await Theatre.create({
@@ -118,7 +160,8 @@ async function init(){
         city : "Bangalore",
         description : "Economical theatre" ,
         pinCode : 560094,
-        movies: [movie2._id,movie5._id]
+        movies: [movie2._id,movie5._id],
+        ownerId: client2._id
 
     });
 
@@ -127,7 +170,8 @@ async function init(){
         city : "Pune",
         description : "Top class theatre" ,
         pinCode : 411001,
-        movies: [movie4._id,movie5._id]
+        movies: [movie4._id,movie5._id],
+        ownerId: client1._id
 
     });
     await Theatre.create({
@@ -135,22 +179,12 @@ async function init(){
         city : "Pune",
         description : "Economical theatre" ,
         pinCode : 411042,
-        movies: [movie1._id,movie4._id] 
+        movies: [movie1._id,movie4._id],
+        ownerId: client3._id
 
     });
 
     console.log("Theatres created");
-
-    await User.collection.drop();
-    await User.create({
-        name: "admin",
-        email: "admin@gmail.com",
-        password: bcrypt.hashSync('Welcome', 8),
-        userId: "admin",
-        userType: "ADMIN"
-    })
-
-    console.log('Admin User has been created');
 }
 catch(err){
     console.log('error while inserting default entries in DB', err);
@@ -163,7 +197,8 @@ require('./routes/auth.routes')(app);
 require('./routes/movie.routes')(app);
 require('./routes/theatre.routes')(app);
 require('./routes/user.routes')(app);
-
+require('./routes/booking.routes')(app);
+require('./routes/payment.routes')(app);
 app.listen(PORT, ()=> {
     console.log(`server is running on port: ${PORT}, please access it on http://localhost:${PORT}`)
 })
