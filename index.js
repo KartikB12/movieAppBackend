@@ -13,12 +13,18 @@ const Movie = require('./models/movies.models');
 const Theatre = require('./models/theatre.model');
 const User = require('./models/users.models');
 const { PORT } = require('./configs/server.config');
-const { DB_URL } = require('./configs/db.config');
+const { DB_URL, DB_PROD_URL } = require('./configs/db.config');
+
+let connectionString= DB_PROD_URL;
+
+if(process.env.NODE_ENV !=='production'){
+     connectionString=DB_URL;
+}
 
 //IIFE MongoDb connection
 (async ()=> {
     try{    
-        await mongoose.connect(DB_URL);
+        await mongoose.connect(connectionString);
         console.log('db connected');
         //await init();
     }
